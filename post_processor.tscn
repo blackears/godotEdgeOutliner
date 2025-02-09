@@ -1,0 +1,48 @@
+[gd_scene load_steps=5 format=3 uid="uid://bn7vopb15kr84"]
+
+[ext_resource type="Shader" path="res://pixelated_post_processor.gdshader" id="1_ty0c8"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_cl6ua"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qge0b"]
+render_priority = 0
+shader = ExtResource("1_ty0c8")
+
+[sub_resource type="QuadMesh" id="QuadMesh_72b4s"]
+flip_faces = true
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+handle_input_locally = false
+size = Vector2i(1152, 648)
+render_target_update_mode = 4
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewportContainer/SubViewport"]
+mesh = SubResource("BoxMesh_cl6ua")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="SubViewportContainer/SubViewport"]
+transform = Transform3D(0.772346, 0, 0.635202, 0, 1, 0, -0.635202, 0, 0.772346, 0.803452, -0.595443, -0.350682)
+mesh = SubResource("BoxMesh_cl6ua")
+
+[node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 0.916642, 0.399709, 0, -0.399709, 0.916642, 0, 1.01059, 3.00498)
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="SubViewportContainer/SubViewport"]
+material_override = SubResource("ShaderMaterial_qge0b")
+mesh = SubResource("QuadMesh_72b4s")
