@@ -11,19 +11,9 @@ uniform sampler2D screen_texture : hint_screen_texture;
 uniform sampler2D depth_texture : hint_depth_texture;
 uniform sampler2D norm_rough_texture : hint_normal_roughness_texture;
 
-//// x direction kernel
-//const mat3 kx = mat3(
-	//vec3(-1, 0, 1),
-	//vec3(-2, 0, 2),
-	//vec3(-1, 0, 1)
-//);
-//
-//// y direction kernel
-//const mat3 ky = mat3(
-	//vec3(-1, -2, -1),
-	//vec3(0, 0, 0),
-	//vec3(1, 2, 1)
-//);
+uniform vec4 line_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+uniform float normals_weight = .5;
+uniform float depth_weight = .001;
 
 // x direction kernel
 const float kx[] = {
@@ -39,15 +29,6 @@ const float ky[] = {
 	1.0, 2.0, 1.0
 };
 
-//float get_depth(vec2 uv) {
-	//float depth = texture(depth_texture, uv).x;
-//
-	//vec3 ndc = vec3(uv * 2.0 - 1.0, depth);
-	//vec4 view = INV_PROJECTION_MATRIX * vec4(ndc, 1.0);
-	//view.xyz /= view.w;
-	//float linear_depth = -view.z;
-	//
-//}
 vec2 pixel_to_screen_uv(vec2 viewport_size, vec2 pixel) {
 	return vec2(pixel.x / viewport_size.x, pixel.y / viewport_size.y);
 }
@@ -62,13 +43,9 @@ void vertex() {
 }
 
 void fragment() {
+	float edge_weight = 0.0;
+	
 	float depth = texture(depth_texture, SCREEN_UV).x;
-
-//#if CURRENT_RENDERER == RENDERER_COMPATIBILITY
-//vec3 ndc = vec3(SCREEN_UV, depth) * 2.0 - 1.0;
-//#else
-//vec3 ndc = vec3(SCREEN_UV * 2.0 - 1.0, depth);
-//#endif
 
 	vec3 ndc = vec3(SCREEN_UV * 2.0 - 1.0, depth);
 	vec4 view = INV_PROJECTION_MATRIX * vec4(ndc, 1.0);
@@ -81,15 +58,15 @@ void fragment() {
 	vec2 pixel_delta = 1.0 / VIEWPORT_SIZE;
 
 	vec2 iuv = vec2(SCREEN_UV.x * VIEWPORT_SIZE.x, SCREEN_UV.y * VIEWPORT_SIZE.y);
-	//vec3 neighbour_left = texture(screen_texture, pixel_to_screen_uv(VIEWPORT_SIZE, iuv + vec2(0, 0))).rgb;
-	//vec3 neighbour_right = texture(screen_texture, pixel_to_screen_uv(VIEWPORT_SIZE, iuv + vec2(0.5, 0))).rgb;
-//
-	//vec3 neighbour_top = texture(screen_texture, pixel_to_screen_uv(VIEWPORT_SIZE, iuv + vec2(0, 0.0))).rgb;
-	//vec3 neighbour_bottom = texture(screen_texture, pixel_to_screen_uv(VIEWPORT_SIZE, iuv + vec2(0, 0.5))).rgb;
+
+	//Edge detect based on depth differences
 	float depth_data[9];
+	vec3 norm_data[9];
 	for (int j = 0; j <= 2; ++j)
 		for (int i = 0; i <= 2; ++i) {
 			vec2 samp_pos = (iuv + vec2(float(i - 1), float(j - 1))) / VIEWPORT_SIZE;
+
+			norm_data[j * 3 + i] = texture(norm_rough_texture, samp_pos).rgb * 2.0 - 1.0;
 
 			float depth = texture(depth_texture, samp_pos).x;
 			vec3 ndc = vec3(samp_pos * 2.0 - 1.0, depth);
@@ -98,25 +75,29 @@ void fragment() {
 			view.xyz /= view.w;
 			float linear_depth = -view.z;
 			depth_data[j * 3 + i] = linear_depth;
-			}
+		}
 
-	float dx = 0.0, dy = 0.0;
+	float dx_depth = 0.0, dy_depth = 0.0;
 	for (int i = 0; i < 9; ++i)
-		dx += kx[i] * depth_data[i];
+		dx_depth += kx[i] * depth_data[i];
 	for (int i = 0; i < 9; ++i)
-		dy += ky[i] * depth_data[i];
+		dy_depth += ky[i] * depth_data[i];
 
-	float sobel = dx * dx + dy * dy;
-//	ALBEDO.rgb = vec3(1, 1, 1) * sobel / 100000.0;
-	ALBEDO.rgb = vec3(1, 1, 1) * (sobel > .5 ? 1.0 : 0.0);
+	float sobel_depth = (dx_depth * dx_depth + dy_depth * dy_depth) / 8.0;
+	sobel_depth = log(sobel_depth);
 
-//	ALBEDO.rgb = texture(screen_texture, SCREEN_UV).rgb;
+	//Edge detect vased on normal variation
+	vec3 dx_norm = vec3(0.0, 0.0, 0.0), dy_norm = vec3(0.0, 0.0, 0.0);
+	for (int i = 0; i < 9; ++i)
+		dx_norm += kx[i] * norm_data[i];
+	for (int i = 0; i < 9; ++i)
+		dy_norm += ky[i] * norm_data[i];
 
-	// Visualize linear depth
-//	ALBEDO.rgb = vec3(fract(linear_depth));
+	float sobel_norm = length(dx_norm * dx_norm + dy_norm * dy_norm) / 8.0;
 
-	// Visualize world coordinates
-	//ALBEDO.rgb = fract(world_position).xyz;
+	edge_weight += sobel_norm * normals_weight  + sobel_depth * depth_weight;
+	ALBEDO.rgb = line_color.rgb;
+	ALPHA = line_color.a * clamp(smoothstep(0.0, 1.0, edge_weight), 0.0, 1.0);
 }
 
 //void light() {

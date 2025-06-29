@@ -1,15 +1,22 @@
-[gd_scene load_steps=5 format=3 uid="uid://bn7vopb15kr84"]
+[gd_scene load_steps=8 format=3 uid="uid://bn7vopb15kr84"]
 
-[ext_resource type="Shader" path="res://pixelated_post_processor.gdshader" id="1_ty0c8"]
+[ext_resource type="ArrayMesh" uid="uid://5j7kbxg3od3c" path="res://assets/bunny.obj" id="1_obgxc"]
+[ext_resource type="Shader" uid="uid://dmldso2gasj6s" path="res://pixelated_post_processor.gdshader" id="1_ty0c8"]
+[ext_resource type="ArrayMesh" uid="uid://dvjjwnfcashco" path="res://assets/tyra.obj" id="3_d1xj5"]
+[ext_resource type="PackedScene" uid="uid://cuply15rj4kg6" path="res://assets/stanford_dragon_pbr.glb" id="4_d1xj5"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_cl6ua"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_qge0b"]
 render_priority = 0
 shader = ExtResource("1_ty0c8")
+shader_parameter/line_color = Color(1, 1, 1, 1)
+shader_parameter/normals_weight = 0.32
+shader_parameter/depth_weight = 0.01
 
 [sub_resource type="QuadMesh" id="QuadMesh_72b4s"]
 flip_faces = true
+size = Vector2(2, 2)
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -33,12 +40,26 @@ handle_input_locally = false
 size = Vector2i(1152, 648)
 render_target_update_mode = 4
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewportContainer/SubViewport"]
-mesh = SubResource("BoxMesh_cl6ua")
+[node name="Node3D" type="Node3D" parent="SubViewportContainer/SubViewport"]
 
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="SubViewportContainer/SubViewport"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D"]
+mesh = SubResource("BoxMesh_cl6ua")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D"]
 transform = Transform3D(0.772346, 0, 0.635202, 0, 1, 0, -0.635202, 0, 0.772346, 0.803452, -0.595443, -0.350682)
 mesh = SubResource("BoxMesh_cl6ua")
+skeleton = NodePath("../..")
+
+[node name="Tyra" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.73831, 0, 0.40552)
+mesh = ExtResource("3_d1xj5")
+skeleton = NodePath("../..")
+
+[node name="Bunny" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D"]
+transform = Transform3D(7.45241, 0, 0, 0, 7.45241, 0, 0, 0, 7.45241, 0.930924, 0, 1.55602)
+mesh = ExtResource("1_obgxc")
+skeleton = NodePath("../..")
 
 [node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport"]
 transform = Transform3D(1, 0, 0, 0, 0.916642, 0.399709, 0, -0.399709, 0.916642, 0, 1.01059, 3.00498)
@@ -46,3 +67,6 @@ transform = Transform3D(1, 0, 0, 0, 0.916642, 0.399709, 0, -0.399709, 0.916642, 
 [node name="MeshInstance3D3" type="MeshInstance3D" parent="SubViewportContainer/SubViewport"]
 material_override = SubResource("ShaderMaterial_qge0b")
 mesh = SubResource("QuadMesh_72b4s")
+
+[node name="Sketchfab_Scene" parent="." instance=ExtResource("4_d1xj5")]
+transform = Transform3D(0.0365527, 0, 0, 0, 0.0365527, 0, 0, 0, 0.0365527, 2.25237, 0, -2.74279)
