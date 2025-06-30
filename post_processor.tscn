@@ -11,7 +11,8 @@
 render_priority = 0
 shader = ExtResource("1_ty0c8")
 shader_parameter/line_color = Color(1, 1, 1, 1)
-shader_parameter/normals_weight = 0.32
+shader_parameter/background_color = Color(1, 1, 1, 0)
+shader_parameter/normals_weight = 0.54
 shader_parameter/depth_weight = 0.01
 
 [sub_resource type="QuadMesh" id="QuadMesh_72b4s"]
@@ -66,6 +67,7 @@ transform = Transform3D(1, 0, 0, 0, 0.916642, 0.399709, 0, -0.399709, 0.916642, 
 
 [node name="MeshInstance3D3" type="MeshInstance3D" parent="SubViewportContainer/SubViewport"]
 material_override = SubResource("ShaderMaterial_qge0b")
+custom_aabb = AABB(-500000, -500000, -500000, 1e+06, 1e+06, 1e+06)
 mesh = SubResource("QuadMesh_72b4s")
 
 [node name="Sketchfab_Scene" parent="." instance=ExtResource("4_d1xj5")]

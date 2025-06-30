@@ -12,8 +12,9 @@ uniform sampler2D depth_texture : hint_depth_texture;
 uniform sampler2D norm_rough_texture : hint_normal_roughness_texture;
 
 uniform vec4 line_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+uniform vec4 background_color : source_color = vec4(1.0, 1.0, 1.0, 0.0);
 uniform float normals_weight = .5;
-uniform float depth_weight = .001;
+uniform float depth_weight = .01;
 
 // x direction kernel
 const float kx[] = {
@@ -29,37 +30,18 @@ const float ky[] = {
 	1.0, 2.0, 1.0
 };
 
-vec2 pixel_to_screen_uv(vec2 viewport_size, vec2 pixel) {
-	return vec2(pixel.x / viewport_size.x, pixel.y / viewport_size.y);
-}
-
-float lum(vec4 color) {
-	vec4 weights = vec4(.2126, .7152, .0722, .0);
-	return dot(color, weights);
-}
-
 void vertex() {
 	POSITION = vec4(VERTEX.xy, 1.0, 1.0);
 }
 
 void fragment() {
 	float edge_weight = 0.0;
-	
-	float depth = texture(depth_texture, SCREEN_UV).x;
-
-	vec3 ndc = vec3(SCREEN_UV * 2.0 - 1.0, depth);
-	vec4 view = INV_PROJECTION_MATRIX * vec4(ndc, 1.0);
-	view.xyz /= view.w;
-	float linear_depth = -view.z;
-
-	vec4 world = INV_VIEW_MATRIX * INV_PROJECTION_MATRIX * vec4(ndc, 1.0);
-	vec3 world_position = world.xyz / world.w;
 
 	vec2 pixel_delta = 1.0 / VIEWPORT_SIZE;
 
 	vec2 iuv = vec2(SCREEN_UV.x * VIEWPORT_SIZE.x, SCREEN_UV.y * VIEWPORT_SIZE.y);
 
-	//Edge detect based on depth differences
+	//Sample textures
 	float depth_data[9];
 	vec3 norm_data[9];
 	for (int j = 0; j <= 2; ++j)
@@ -70,23 +52,23 @@ void fragment() {
 
 			float depth = texture(depth_texture, samp_pos).x;
 			vec3 ndc = vec3(samp_pos * 2.0 - 1.0, depth);
-
 			vec4 view = INV_PROJECTION_MATRIX * vec4(ndc, 1.0);
 			view.xyz /= view.w;
 			float linear_depth = -view.z;
 			depth_data[j * 3 + i] = linear_depth;
 		}
 
+	//Edge detect based on depth differences
 	float dx_depth = 0.0, dy_depth = 0.0;
 	for (int i = 0; i < 9; ++i)
 		dx_depth += kx[i] * depth_data[i];
 	for (int i = 0; i < 9; ++i)
 		dy_depth += ky[i] * depth_data[i];
 
-	float sobel_depth = (dx_depth * dx_depth + dy_depth * dy_depth) / 8.0;
-	sobel_depth = log(sobel_depth);
+	float sobel_depth = sqrt(dx_depth * dx_depth + dy_depth * dy_depth) / 8.0;
+	//sobel_depth = log(sobel_depth);
 
-	//Edge detect vased on normal variation
+	//Edge detect based on normal variation
 	vec3 dx_norm = vec3(0.0, 0.0, 0.0), dy_norm = vec3(0.0, 0.0, 0.0);
 	for (int i = 0; i < 9; ++i)
 		dx_norm += kx[i] * norm_data[i];
@@ -96,8 +78,11 @@ void fragment() {
 	float sobel_norm = length(dx_norm * dx_norm + dy_norm * dy_norm) / 8.0;
 
 	edge_weight += sobel_norm * normals_weight  + sobel_depth * depth_weight;
-	ALBEDO.rgb = line_color.rgb;
-	ALPHA = line_color.a * clamp(smoothstep(0.0, 1.0, edge_weight), 0.0, 1.0);
+	vec4 final_color = mix(background_color, line_color, smoothstep(0.0, 1.0, edge_weight));
+	ALBEDO.rgb = final_color.rgb;
+	ALPHA = final_color.a;
+	//ALBEDO.rgb = line_color.rgb;
+	//ALPHA = line_color.a * clamp(smoothstep(0.0, 1.0, edge_weight), 0.0, 1.0);
 }
 
 //void light() {
