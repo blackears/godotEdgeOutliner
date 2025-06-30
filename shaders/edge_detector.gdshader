@@ -2,7 +2,6 @@
 //https://github.com/KodyJKing/hello-threejs/blob/main/src/RenderPixelatedPass.ts
 //https://godotshaders.com/shader/simple-sobel-filter/
 
-
 shader_type spatial;
 // Prevent the quad from being affected by lighting and fog. This also improves performance.
 render_mode unshaded, fog_disabled;
@@ -50,11 +49,12 @@ void fragment() {
 
 			norm_data[j * 3 + i] = texture(norm_rough_texture, samp_pos).rgb * 2.0 - 1.0;
 
-			float depth = texture(depth_texture, samp_pos).x;
-			vec3 ndc = vec3(samp_pos * 2.0 - 1.0, depth);
-			vec4 view = INV_PROJECTION_MATRIX * vec4(ndc, 1.0);
-			view.xyz /= view.w;
-			float linear_depth = -view.z;
+			float depth = texture(depth_texture, samp_pos).r;
+			//vec3 upos = vec3(samp_pos * 2.0 - 1.0, depth);
+			vec4 upos = INV_PROJECTION_MATRIX * vec4(samp_pos * 2.0 - 1.0, depth, 1.0);
+			upos.xyz /= upos.w;
+			vec3 pixel_pos = upos.xyz;
+			float linear_depth = -pixel_pos.z;
 			depth_data[j * 3 + i] = linear_depth;
 		}
 

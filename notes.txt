@@ -1,0 +1,1 @@
+Use huge custom collision box on viewport overlay quad.

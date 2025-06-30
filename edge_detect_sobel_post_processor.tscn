@@ -1,0 +1,74 @@
+[gd_scene load_steps=7 format=3 uid="uid://cx6eib2it5grv"]
+
+[ext_resource type="ArrayMesh" uid="uid://dvjjwnfcashco" path="res://assets/tyra.obj" id="1_at2f4"]
+[ext_resource type="ArrayMesh" uid="uid://5j7kbxg3od3c" path="res://assets/bunny.obj" id="2_qwfro"]
+[ext_resource type="Shader" uid="uid://doe3850cxwv2p" path="res://shaders/edge_detector_sobel.gdshader" id="3_at2f4"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_4d3gp"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ee2sa"]
+render_priority = 0
+shader = ExtResource("3_at2f4")
+shader_parameter/line_color = Color(1, 1, 1, 1)
+shader_parameter/background_color = Color(0, 0, 0, 1)
+shader_parameter/normals_weight = 0.54
+shader_parameter/depth_weight = 0.01
+shader_parameter/kernel_radius = 4
+shader_parameter/normal_cutoff_min = -0.085
+shader_parameter/normal_cutoff_max = 0.41
+
+[sub_resource type="QuadMesh" id="QuadMesh_acaon"]
+flip_faces = true
+size = Vector2(2, 2)
+
+[node name="EdgeDetectSobelPostProcessor" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+layout_mode = 0
+offset_left = 266.0
+offset_top = 67.0
+offset_right = 841.0
+offset_bottom = 412.0
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+handle_input_locally = false
+size = Vector2i(575, 345)
+render_target_update_mode = 4
+
+[node name="Node3D" type="Node3D" parent="SubViewportContainer/SubViewport"]
+
+[node name="Node3D" type="Node3D" parent="SubViewportContainer/SubViewport/Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D/Node3D"]
+mesh = SubResource("BoxMesh_4d3gp")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D/Node3D"]
+transform = Transform3D(0.772346, 0, 0.635202, 0, 1, 0, -0.635202, 0, 0.772346, 0.803452, -0.595443, -0.350682)
+mesh = SubResource("BoxMesh_4d3gp")
+skeleton = NodePath("../..")
+
+[node name="Tyra" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D/Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.73831, 0, 0.40552)
+mesh = ExtResource("1_at2f4")
+skeleton = NodePath("../..")
+
+[node name="Bunny" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D/Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.930924, 0, 1.55602)
+mesh = ExtResource("2_qwfro")
+skeleton = NodePath("../..")
+
+[node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport/Node3D"]
+transform = Transform3D(1, 0, 0, 0, 0.916642, 0.399709, 0, -0.399709, 0.916642, 0, 1.01059, 3.00498)
+
+[node name="overlay_quad" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D"]
+material_override = SubResource("ShaderMaterial_ee2sa")
+custom_aabb = AABB(-500000, -500000, -500000, 1e+06, 1e+06, 1e+06)
+mesh = SubResource("QuadMesh_acaon")
