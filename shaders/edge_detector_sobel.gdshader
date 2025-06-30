@@ -18,8 +18,8 @@ uniform float normals_weight = .5;
 uniform float depth_weight = .01;
 
 uniform int kernel_radius:hint_range(1, 100, 1) = 1;
-uniform float normal_cutoff_min = 0;
-uniform float normal_cutoff_max = .2;
+uniform float normal_cutoff = .5;
+uniform float normal_cutoff_radius:hint_range(0, 100, .001) = .1;
 
 void vertex() {
 	//Reposition 2x2 quad at origin to cover viewport
@@ -62,7 +62,8 @@ void fragment() {
 	float normal_mask = (length(normal_dx_sum) + length(normal_dy_sum)) / kernel_abs_sum;
 //	ALBEDO = mix(background_color, line_color, smoothstep(normal_mask, normal_cutoff_min, normal_cutoff_max)).rgb;
 //	vec4 final_col = mix(background_color, line_color, normal_mask);
-	vec4 final_col = mix(background_color, line_color, smoothstep(normal_mask, normal_cutoff_min, normal_cutoff_max));
+	vec4 final_col = mix(background_color, line_color, 
+		smoothstep(normal_cutoff - normal_cutoff_radius, normal_cutoff + normal_cutoff_radius, normal_mask));
 	ALBEDO = final_col.rgb;
 	ALPHA = final_col.a;
 	
@@ -70,7 +71,6 @@ void fragment() {
 //	ALBEDO = normal_dx_sum + normal_dy_sum * 1.0;
 //	ALBEDO = (length(normal_dx_sum) + length(normal_dy_sum)) / kernel_abs_sum * vec3(1, 1, 1);
 	
-	normal_cutoff_min;
 	
 //	ALBEDO = 100.0 * normal_dy_sum / weight_sum;
 //	ALBEDO = 100.0 * normal_dx_sum / weight_sum;
