@@ -10,17 +10,16 @@
 render_priority = 0
 shader = ExtResource("3_at2f4")
 shader_parameter/line_color = Color(1, 1, 1, 1)
-shader_parameter/background_color = Color(0, 0, 0, 1)
-shader_parameter/detect_type = 0
-shader_parameter/map_quad_to_viewport = false
-shader_parameter/kernel_radius = 3
-shader_parameter/normal_cutoff = 0.4
+shader_parameter/background_color = Color(0, 0, 0, 0)
+shader_parameter/detect_type = 1
+shader_parameter/map_quad_to_viewport = true
+shader_parameter/kernel_radius = 2
+shader_parameter/normal_cutoff = 0.225
 shader_parameter/normal_cutoff_radius = 0.0
-shader_parameter/depth_cutoff = 1.92
+shader_parameter/depth_cutoff = 1.74
 shader_parameter/depth_cutoff_radius = 0.0
 
 [sub_resource type="QuadMesh" id="QuadMesh_acaon"]
-size = Vector2(2, 2)
 
 [node name="EdgeDetectSobelPostProcessor" type="Control"]
 layout_mode = 3
@@ -48,11 +47,13 @@ render_target_update_mode = 4
 [node name="Node3D" type="Node3D" parent="SubViewportContainer/SubViewport/Node3D"]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D/Node3D"]
+visible = false
 mesh = SubResource("BoxMesh_4d3gp")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D/Node3D"]
 transform = Transform3D(0.772346, 0, 0.635202, 0, 1, 0, -0.635202, 0, 0.772346, 0.803452, -0.595443, -0.350682)
+visible = false
 mesh = SubResource("BoxMesh_4d3gp")
 skeleton = NodePath("../..")
 
@@ -68,8 +69,10 @@ skeleton = NodePath("../..")
 
 [node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport/Node3D"]
 transform = Transform3D(1, 0, 0, 0, 0.916642, 0.399709, 0, -0.399709, 0.916642, 0, 1.01059, 3.00498)
+visible = false
 
 [node name="overlay_quad" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.702492, 0)
 material_override = SubResource("ShaderMaterial_ee2sa")
 custom_aabb = AABB(-500000, -500000, -500000, 1e+06, 1e+06, 1e+06)
 mesh = SubResource("QuadMesh_acaon")
