@@ -11,11 +11,12 @@ render_priority = 0
 shader = ExtResource("3_at2f4")
 shader_parameter/line_color = Color(1, 1, 1, 1)
 shader_parameter/background_color = Color(0, 0, 0, 1)
-shader_parameter/normals_weight = 0.54
-shader_parameter/depth_weight = 0.01
-shader_parameter/kernel_radius = 1
+shader_parameter/detect_type = 0
+shader_parameter/kernel_radius = 3
 shader_parameter/normal_cutoff = 0.4
 shader_parameter/normal_cutoff_radius = 0.0
+shader_parameter/depth_cutoff = 1.92
+shader_parameter/depth_cutoff_radius = 0.0
 
 [sub_resource type="QuadMesh" id="QuadMesh_acaon"]
 flip_faces = true

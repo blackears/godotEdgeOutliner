@@ -1,0 +1,54 @@
+[gd_scene load_steps=10 format=3 uid="uid://ca805dqc4784p"]
+
+[ext_resource type="PackedScene" uid="uid://b73mm1cnn4yax" path="res://assets/landscape/landscape.glb" id="1_rw4f8"]
+[ext_resource type="Texture2D" uid="uid://m0h8dv67uoy3" path="res://assets/texture/sky_clouds.png" id="2_p1p4b"]
+[ext_resource type="PackedScene" uid="uid://c804hmr0770v5" path="res://scenes/characters/player_first_person.tscn" id="3_p1p4b"]
+[ext_resource type="Shader" uid="uid://doe3850cxwv2p" path="res://shaders/edge_detector_sobel.gdshader" id="4_he0g7"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_he0g7"]
+panorama = ExtResource("2_p1p4b")
+
+[sub_resource type="Sky" id="Sky_bb3md"]
+sky_material = SubResource("PanoramaSkyMaterial_he0g7")
+
+[sub_resource type="Environment" id="Environment_t01vo"]
+background_mode = 2
+sky = SubResource("Sky_bb3md")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_t01vo"]
+render_priority = 0
+shader = ExtResource("4_he0g7")
+shader_parameter/line_color = Color(1, 1, 1, 1)
+shader_parameter/background_color = Color(0, 0, 0, 1)
+shader_parameter/detect_type = 1
+shader_parameter/map_quad_to_viewport = true
+shader_parameter/kernel_radius = 3
+shader_parameter/normal_cutoff = 0.4
+shader_parameter/normal_cutoff_radius = 0.0
+shader_parameter/depth_cutoff = 1.92
+shader_parameter/depth_cutoff_radius = 0.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_he0g7"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="landscape" parent="." instance=ExtResource("1_rw4f8")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_t01vo")
+
+[node name="PlayerFirstPerson" parent="." instance=ExtResource("3_p1p4b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.719, 3.92082, 18.5068)
+
+[node name="Camera3D" type="Camera3D" parent="PlayerFirstPerson"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 1.52644, 0)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.492287, -0.870433, 0, 0.434453, 0.245712, 0.866531, -0.754257, -0.426582, 0.499123, 0, 13.4993, 0)
+
+[node name="overlay_quad" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.71306, 0)
+visible = false
+material_override = SubResource("ShaderMaterial_t01vo")
+custom_aabb = AABB(-500000, -500000, -500000, 1e+06, 1e+06, 1e+06)
+mesh = SubResource("QuadMesh_he0g7")

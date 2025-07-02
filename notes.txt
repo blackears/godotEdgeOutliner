@@ -1,1 +1,3 @@
 Use huge custom collision box on viewport overlay quad.
+
+Overlay quad must be 2x2
