@@ -71,24 +71,24 @@ void fragment() {
 	vec3 normal_dx_sum = vec3(0, 0, 0);
 	vec3 normal_dy_sum = vec3(0, 0, 0);
 	float kernel_abs_sum = 0.0;
-	
+
 	for (int j = -kernel_radius; j <= kernel_radius; ++j)
 		for (int i = -kernel_radius; i <= kernel_radius; ++i)
 		{
 			if (i == 0 && j == 0)
 				continue;
-			
+
 			//Normal
 			ivec2 offset_co = ivec2(i, j);
 			float kx = sobel_kernel_x(offset_co);
 			float ky = sobel_kernel_y(offset_co);
 			kernel_abs_sum += abs(kx);
-		
-			vec3 normal = texelFetch(norm_rough_texture, 
+
+			vec3 normal = texelFetch(norm_rough_texture,
 				ivec2(SCREEN_UV * VIEWPORT_SIZE) + offset_co, 0).rgb * 2.0 - 1.0;
 			normal_dx_sum += normal * kx;
 			normal_dy_sum += normal * ky;
-			
+
 			//Depth
 			float depth = texelFetch(depth_texture, ivec2(SCREEN_UV * VIEWPORT_SIZE) + offset_co, 0).r;
 			vec4 upos = INV_PROJECTION_MATRIX * vec4(SCREEN_UV * 2.0 - 1.0, depth, 1.0);
@@ -96,35 +96,35 @@ void fragment() {
 			//Position of fragment relative to camera
 			vec3 pixel_pos = upos.xyz;
 			float linear_depth = -pixel_pos.z;
-			
+
 			depth_dx_sum += linear_depth * kx;
 			depth_dy_sum += linear_depth * ky;
 		}
-	
+
 	float normal_mask = (length(normal_dx_sum) + length(normal_dy_sum)) / kernel_abs_sum;
 	float depth_mask = sqrt(depth_dx_sum * depth_dx_sum + depth_dy_sum * depth_dy_sum);
-	
+
 	if (detect_type == 1) {
-		vec4 final_normals_col = mix(background_color, line_color, 
+		vec4 final_normals_col = mix(background_color, line_color,
 			smoothstep(normal_cutoff - normal_cutoff_radius, normal_cutoff + normal_cutoff_radius, normal_mask));
 		ALBEDO = final_normals_col.rgb;
 		ALPHA = final_normals_col.a;
 	}
 	else if (detect_type == 2) {
-		vec4 final_depth_col = mix(background_color, line_color, 
+		vec4 final_depth_col = mix(background_color, line_color,
 			smoothstep(depth_cutoff - depth_cutoff_radius, depth_cutoff + depth_cutoff_radius, depth_mask));
 		ALBEDO = final_depth_col.rgb;
 		ALPHA = final_depth_col.a;
 	}
 	else {
-		vec4 final_col = mix(background_color, line_color, 
-			smoothstep(normal_cutoff - normal_cutoff_radius, normal_cutoff + normal_cutoff_radius, normal_mask) + 
+		vec4 final_col = mix(background_color, line_color,
+			smoothstep(normal_cutoff - normal_cutoff_radius, normal_cutoff + normal_cutoff_radius, normal_mask) +
 			smoothstep(depth_cutoff - depth_cutoff_radius, depth_cutoff + depth_cutoff_radius, depth_mask)
 			);
 		ALBEDO = final_col.rgb;
 		ALPHA = final_col.a;
 	}
-	
+
 }
 
 //void light() {

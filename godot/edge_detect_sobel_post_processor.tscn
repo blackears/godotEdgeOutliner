@@ -10,8 +10,8 @@
 render_priority = 0
 shader = ExtResource("3_at2f4")
 shader_parameter/line_color = Color(1, 1, 1, 1)
-shader_parameter/background_color = Color(0, 0, 0, 0)
-shader_parameter/detect_type = 1
+shader_parameter/background_color = Color(1, 1, 1, 0)
+shader_parameter/detect_type = 0
 shader_parameter/map_quad_to_viewport = true
 shader_parameter/kernel_radius = 2
 shader_parameter/normal_cutoff = 0.225
@@ -47,23 +47,21 @@ render_target_update_mode = 4
 [node name="Node3D" type="Node3D" parent="SubViewportContainer/SubViewport/Node3D"]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D/Node3D"]
-visible = false
 mesh = SubResource("BoxMesh_4d3gp")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D/Node3D"]
 transform = Transform3D(0.772346, 0, 0.635202, 0, 1, 0, -0.635202, 0, 0.772346, 0.803452, -0.595443, -0.350682)
-visible = false
 mesh = SubResource("BoxMesh_4d3gp")
 skeleton = NodePath("../..")
 
 [node name="Tyra" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D/Node3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.73831, 0, 0.40552)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.68596, 0, 0.40552)
 mesh = ExtResource("1_at2f4")
 skeleton = NodePath("../..")
 
 [node name="Bunny" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D/Node3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.930924, 0, 1.55602)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.90529, 0, 1.55602)
 mesh = ExtResource("2_qwfro")
 skeleton = NodePath("../..")
 
