@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://cuply15rj4kg6"
-path="res://.godot/imported/stanford_dragon_pbr.glb-4573391d41a47f93b563f00004d74c44.scn"
+uid="uid://nsn045mlw546"
+path="res://.godot/imported/person.glb-cbfda8d38ee13679c66cf795c9b00e10.scn"
 
 [deps]
 
-source_file="res://assets/stanford_dragon_pbr.glb"
-dest_files=["res://.godot/imported/stanford_dragon_pbr.glb-4573391d41a47f93b563f00004d74c44.scn"]
+source_file="res://assets/person.glb"
+dest_files=["res://.godot/imported/person.glb-cbfda8d38ee13679c66cf795c9b00e10.scn"]
 
 [params]
 

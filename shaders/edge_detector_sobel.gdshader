@@ -47,9 +47,12 @@ uniform float depth_cutoff = .5;
 uniform float depth_cutoff_radius:hint_range(0, 10, .001) = .1;
 
 void vertex() {
-	//Reposition 2x2 quad at origin to cover viewport
 	if (map_quad_to_viewport)
+		//Reposition 2x2 quad at origin to cover viewport
 		POSITION = vec4(-VERTEX.x * 2.0, VERTEX.y * 2.0, 1.0, 1.0);
+	else
+		//Default model view projection
+		POSITION = PROJECTION_MATRIX * MODELVIEW_MATRIX * vec4(VERTEX, 1.0);
 }
 
 float sobel_kernel_x(ivec2 pos) {

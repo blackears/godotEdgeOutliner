@@ -12,6 +12,7 @@ shader = ExtResource("3_at2f4")
 shader_parameter/line_color = Color(1, 1, 1, 1)
 shader_parameter/background_color = Color(0, 0, 0, 1)
 shader_parameter/detect_type = 0
+shader_parameter/map_quad_to_viewport = false
 shader_parameter/kernel_radius = 3
 shader_parameter/normal_cutoff = 0.4
 shader_parameter/normal_cutoff_radius = 0.0
@@ -19,7 +20,6 @@ shader_parameter/depth_cutoff = 1.92
 shader_parameter/depth_cutoff_radius = 0.0
 
 [sub_resource type="QuadMesh" id="QuadMesh_acaon"]
-flip_faces = true
 size = Vector2(2, 2)
 
 [node name="EdgeDetectSobelPostProcessor" type="Control"]

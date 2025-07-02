@@ -21,7 +21,7 @@ shader = ExtResource("4_he0g7")
 shader_parameter/line_color = Color(1, 1, 1, 1)
 shader_parameter/background_color = Color(0, 0, 0, 1)
 shader_parameter/detect_type = 1
-shader_parameter/map_quad_to_viewport = true
+shader_parameter/map_quad_to_viewport = false
 shader_parameter/kernel_radius = 3
 shader_parameter/normal_cutoff = 0.4
 shader_parameter/normal_cutoff_radius = 0.0
@@ -48,7 +48,6 @@ transform = Transform3D(0.492287, -0.870433, 0, 0.434453, 0.245712, 0.866531, -0
 
 [node name="overlay_quad" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.71306, 0)
-visible = false
 material_override = SubResource("ShaderMaterial_t01vo")
 custom_aabb = AABB(-500000, -500000, -500000, 1e+06, 1e+06, 1e+06)
 mesh = SubResource("QuadMesh_he0g7")
